@@ -219,6 +219,16 @@ alive by apache via the KeepAliveTimeout directive"
             done
         ;;
         
+        0)  # Sort by sending reply (W)
+            while [[ -z "$looper" ]]
+            do
+                tput clear
+                links -dump http://localhost/server-status | grep ^[0-9] | grep -v "server-status" | grep "W" | awk 'BEGIN {print "Seconds  PID    CPU State TYPE         IP                  Domain/URL\n--"} {printf "%-6s %6s %6s %-4s %-8s %-20s %2s %-2s\n",  $6, $2, $5,"  " $4, $13, $11, $12, $14|"sort -k 3 -n"}' | head $limit
+                echo
+                echo -e "$green Type any key to switch sort options. $reset"
+                read -s -n 1 -t 1 looper || true
+            done
+        ;;
 
 
         q)  # quit
@@ -257,6 +267,7 @@ alive by apache via the KeepAliveTimeout directive"
     r = raw apache status output (good with limit of at least 50)
     s = search for a term, returns raw Apache Server Status results
     w = sort by inactive workers
+    0 = sort by sending reply (W)
     q = quit
 "
 
